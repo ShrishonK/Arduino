@@ -68,7 +68,7 @@ const int piezoPin = 12;
 long duration;
 int distanceCm, distanceInch;
 unsigned long previousMillis = 0;
-const long interval = 120000; // 20 minutes in milliseconds
+const long interval = 1200000; // 20 minutes in milliseconds
 
 void setup() {
   lcd.begin(16, 2);
@@ -79,6 +79,7 @@ void setup() {
 }
 
 void loop() {
+
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
   digitalWrite(trigPin, HIGH);
@@ -117,7 +118,11 @@ void loop() {
   } else {
     // Timer expired
     lcd.print("Get Moving!");
-    noTone(piezoPin);
+    for (int i = 0; i < 45; i++) {
+      tone(SPEAKER_PIN, FIRST_MELODY[i], 1500 / FIRST_DURATIONS[i]);
+      delay(1800 / FIRST_DURATIONS[i]);
+      noTone(SPEAKER_PIN);
+
 
     // Reset the timer
     previousMillis = currentMillis;
