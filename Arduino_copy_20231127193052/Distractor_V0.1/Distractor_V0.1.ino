@@ -68,7 +68,9 @@ const int piezoPin = 12;
 long duration;
 int distanceCm, distanceInch;
 unsigned long previousMillis = 0;
-const long interval = 1200000; // 20 minutes in milliseconds
+const long interval = 3000; // 20 minutes in milliseconds
+unsigned int immediateDist;
+unsigned int currentDist = immediateDist - distanceInch;
 
 void setup() {
   lcd.begin(16, 2);
@@ -101,36 +103,28 @@ void loop() {
     // Display the remaining time
     lcd.print((interval - elapsedTime) / 60000); // Convert milliseconds to minutes
     lcd.print(" min");
+  }
     
+  else {
     // Piezo
-    if (distanceInch > 5) {
-      for (int i = 0; i < 45; i++) {
+    if (elapsedTime > interval) {
+      immediateDist = distanceInch;
+      lcd.clear();
+      lcd.print("Get Moving!");
+      while (abs(currentDist) < 3) {
+        printf(currentDist);
+        for (int i = 0; i < 45; i++) {
         tone(SPEAKER_PIN, FIRST_MELODY[i], 1500 / FIRST_DURATIONS[i]);
         delay(1800 / FIRST_DURATIONS[i]);
         noTone(SPEAKER_PIN);
-
-        if (distanceInch < 5)
-          break;
-  }
-    } else {
-      noTone(piezoPin);
+        
+        }
+      }
+      previousMillis = currentMillis;
     }
-  } else {
-    // Timer expired
-    lcd.print("Get Moving!");
-    for (int i = 0; i < 45; i++) {
-      tone(SPEAKER_PIN, FIRST_MELODY[i], 1500 / FIRST_DURATIONS[i]);
-      delay(1800 / FIRST_DURATIONS[i]);
-      noTone(SPEAKER_PIN);
 
 
-    // Reset the timer
-    previousMillis = currentMillis;
-  }
 
-  if (distanceInch > 20) {
-    // Reset the timer when the distance is greater than 20 inches
-    previousMillis = currentMillis;
   }
 
   delay(10);
